@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/shopspotlight/static/css/main.38cc2732.css",
+    "main.js": "/shopspotlight/static/js/main.360a9f52.js",
+    "static/js/453.b21a91d2.chunk.js": "/shopspotlight/static/js/453.b21a91d2.chunk.js",
+    "index.html": "/shopspotlight/index.html",
+    "main.38cc2732.css.map": "/shopspotlight/static/css/main.38cc2732.css.map",
+    "main.360a9f52.js.map": "/shopspotlight/static/js/main.360a9f52.js.map",
+    "453.b21a91d2.chunk.js.map": "/shopspotlight/static/js/453.b21a91d2.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.38cc2732.css",
+    "static/js/main.360a9f52.js"
+  ]
+}

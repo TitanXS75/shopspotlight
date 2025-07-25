@@ -1,0 +1,283 @@
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f9f9fb;
+  color: #333;
+}
+
+/* Header Styles */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+}
+
+.header .user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header .logout-btn {
+  background: none;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+/* Main Content Layout */
+.discover-page {
+  display: flex;
+  height: 100vh;
+  background-color: #f9f9fb;
+}
+
+.sidebar {
+  width: 300px;
+  background: #fff;
+  padding: 24px;
+  border-right: 1px solid #eee;
+}
+
+.main-content {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+/* Sidebar Components */
+.search-filter {
+  background: #fff;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.search-filter input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+}
+
+.status-filter {
+  margin-top: 16px;
+}
+
+.status-filter button {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.status-filter button.active {
+  background-color: #6a0dad;
+  color: #fff;
+  border: 1px solid #6a0dad;
+}
+
+.upcoming {
+  background: #fff;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.upcoming h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.upcoming p {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 16px;
+}
+
+.upcoming .appointment {
+  background: #f9f9ff;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.upcoming .appointment h4 {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.upcoming .appointment p {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.upcoming .appointment span {
+  font-size: 12px;
+  color: #007bff;
+  text-decoration: underline;
+}
+
+/* Main Content Components */
+.main-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.main-title h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.main-title p {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
+}
+
+.view-map-btn {
+  background-color: #f3f3f3;
+  border: 1px solid #ccc;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.shop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+/* Shop Card Styles */
+.shop-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.shop-card h3 {
+  margin: 0 0 6px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.shop-card .description {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 12px;
+}
+
+.shop-card .info {
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #444;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.shop-card .rating {
+  margin-top: 4px;
+}
+
+.shop-card .status-badge {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 50px;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.status-open {
+  background-color: #e6f9ec;
+  color: #13aa52;
+}
+
+.status-busy {
+  background-color: #fff4e5;
+  color: #d9822b;
+}
+
+.status-closed {
+  background-color: #fde7e9;
+  color: #d93025;
+}
+
+.shop-card .actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.shop-card .btn {
+  flex: 1;
+  padding: 8px;
+  font-size: 14px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.shop-card .btn.details {
+  background: #f7f7f7;
+}
+
+.shop-card .btn.primary {
+  background-color: #00c853;
+  color: #fff;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.shop-card .btn.busy {
+  background-color: #ffb300;
+  color: #fff;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    border-right: none;
+  }
+
+  .main-content {
+    padding: 16px;
+  }
+
+  .shop-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}

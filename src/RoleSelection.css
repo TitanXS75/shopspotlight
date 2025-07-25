@@ -1,0 +1,90 @@
+/* Container */
+.role-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  min-height: 100vh;
+  background-color: #f9f9f9;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Main Titles */
+.title {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 5px;
+  color: #8a4dff;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #888;
+  margin-bottom: 30px;
+}
+
+/* Card Container */
+.card {
+  background-color: #fff;
+  padding: 30px 25px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 400px;
+  text-align: left;
+}
+
+/* Role Selection Text */
+.choose-role {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.helper-text {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* Role Option Boxes */
+.role-option {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border: 2px solid #e0e0e0;
+  padding: 15px 20px;
+  margin-bottom: 15px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+  background-color: #fff;
+}
+
+.role-option:hover {
+  border-color: #bfa3f5;
+  background-color: #f5f0ff;
+}
+
+.role-option.selected {
+  border-color: #8a4dff;
+  background-color: #f3eaff;
+}
+
+/* Continue Button */
+.continue-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  background-color: #e0ccff; /* Light purple for disabled state */
+  color: white;
+  cursor: not-allowed;
+  transition: background-color 0.3s ease, cursor 0.3s ease;
+}
+
+.continue-btn.enabled {
+  background-color: #8a4dff; /* Vibrant purple when enabled */
+  cursor: pointer;
+}

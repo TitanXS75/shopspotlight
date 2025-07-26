@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopSync - Connect Shops & Customers</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .map-container {
+            height: 300px;
+            background-color: #e5e7eb;
+            position: relative;
+            overflow: hidden;
+        }
+        .map-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #6b7280;
+            font-weight: bold;
+        }
+        .status-open {
+            background-color: #10b981;
+        }
+        .status-closed {
+            background-color: #ef4444;
+        }
+        .status-busy {
+            background-color: #f59e0b;
+        }
+        .status-mild {
+            background-color: #3b82f6;
+        }
+        .slide-in {
+            animation: slideIn 0.3s forwards;
+        }
+        .slide-out {
+            animation: slideOut 0.3s forwards;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); }
+            to { transform: translateX(100%); }
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <i class="fas fa-store text-indigo-600 text-2xl mr-2"></i>
+                        <span class="text-xl font-bold text-gray-900">ShopSpotlight.</span>
+                    </div>
+                </div>
+                <div class="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
+                    <button id="customerBtn" class="px-3 py-2 rounded-md text-sm font-medium bg-indigo-600 text-white">Customer</button>
+                    <button id="vendorBtn" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">Shop Owner</button>
+                    <button id="loginBtn" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">Login</button>
+                    <button id="registerBtn" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">Register</button>
+                </div>
+                <div class="-mr-2 flex items-center sm:hidden">
+                    <button id="mobileMenuBtn" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile menu -->
+        <div id="mobileMenu" class="hidden sm:hidden bg-white border-t border-gray-200">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <button id="mobileCustomerBtn" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium bg-indigo-600 text-white">Customer</button>
+                <button id="mobileVendorBtn" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100">Shop Owner</button>
+                <button id="mobileLoginBtn" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100">Login</button>
+                <button id="mobileRegisterBtn" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100">Register</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Customer View -->
+        <div id="customerView" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold text-gray-900">Find Shops Near You</h1>
+                <div class="mt-4 flex flex-col sm:flex-row gap-4">
+                    <div class="relative flex-grow">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                        <input type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Search for shops...">
+                    </div>
+                    <button class="px-4 py-2 border border-gray-300 rounded-md bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center">
+                        <i class="fas fa-filter mr-2"></i> Filters
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Map Section -->
+                <div class="lg:col-span-2 space-y-4">
+                    <div class="map-container rounded-lg shadow">
+                        <div class="map-placeholder">
+                            <i class="fas fa-map-marker-alt text-4xl mr-3"></i>
+                            <span>Map view of nearby shops</span>
+                        </div>
+                    </div>
+
+                    <!-- Shop List -->
+                    <div class="bg-white shadow rounded-lg overflow-hidden">
+                        <div class="px-4 py-3 border-b border-gray-200 bg-gray-50">
+                            <h2 class="text-lg font-medium text-gray-900">Nearby Shops</h2>
+                        </div>
+                        <div class="divide-y divide-gray-200">
+                            <!-- Shop Item 1 -->
+                            <div class="p-4 hover:bg-gray-50 cursor-pointer">
+                                <div class="flex items-start">
+                                    <div class="flex-shrink-0 h-16 w-16 rounded-md bg-gray-200 overflow-hidden">
+                                        <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" alt="Shop image" class="h-full w-full object-cover">
+                                    </div>
+                                    <div class="ml-4 flex-1">
+                                        <div class="flex items-center justify-between">
+                                            <h3 class="text-lg font-medium text-gray-900">Fresh Groceries</h3>
+                                            <span class="px-2 py-1 text-xs rounded-full status-open text-white">Open</span>
+                                        </div>
+                                        <p class="text-sm text-gray-500 mt-1"><i class="fas fa-map-marker-alt mr-1"></i> 1.2 miles away • 123 Main St</p>
+                                        <p class="text-sm text-gray-600 mt-1">Fresh produce, dairy, and pantry staples</p>
+                                        <div class="mt-2 flex items-center justify-between">
+                                            <div class="flex items-center text-sm text-gray-500">
+                                                <i class="fas fa-clock mr-1"></i> Open until 9:00 PM
+                                            </div>
+                                            <button class="text-sm font-medium text-indigo-600 hover:text-indigo-500">Book Appointment</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Shop Item 2 -->
+                            <div class="p-4 hover:bg-gray-50 cursor-pointer">
+                                <div class="flex items-start">
+                                    <div class="flex-shrink-0 h-16 w-16 rounded-md bg-gray-200 overflow-hidden">
+                                        <img src="https://images.unsplash.com/photo-1580828343064-fde4fc206bc6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" alt="Shop image" class="h-full w-full object-cover">
+                                    </div>
+                                    <div class="ml-4 flex-1">
+                                        <div class="flex items-center justify-between">
+                                            <h3 class="text-lg font-medium text-gray-900">Quick Fix Auto</h3>
+                                            <span class="px-2 py-1 text-xs rounded-full status-busy text-white">Busy</span>
+                                        </div>
+                                        <p class="text-sm text-gray-500 mt-1"><i class="fas fa-map-marker-alt mr-1"></i> 2.5 miles away • 456 Oak Ave</p>
+                                        <p class="text-sm text-gray-600 mt-1">Auto repair and maintenance services</p>
+                                        <div class="mt-2 flex items-center justify-between">
+                                            <div class="flex items-center text-sm text-gray-500">
+                                                <i class="fas fa-clock mr-1"></i> Open until 6:00 PM
+                                            </div>
+                                            <button class="text-sm font-medium text-indigo-600 hover:text-indigo-500">Book Appointment</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Shop Item 3 -->
+                            <div class="p-4 hover:bg-gray-50 cursor-pointer">
+                                <div class="flex items-start">
+                                    <div class="flex-shrink-0 h-16 w-16 rounded-md bg-gray-200 overflow-hidden">
+                                        <img src="https://images.unsplash.com/photo-1528699633788-424224dc89b5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" alt="Shop image" class="h-full w-full object-cover">
+                                    </div>
+                                    <div class="ml-4 flex-1">
+                                        <div class="flex items-center justify-between">
+                                            <h3 class="text-lg font-medium text-gray-900">Style Salon</h3>
+                                            <span class="px-2 py-1 text-xs rounded-full status-mild text-white">Mild Traffic</span>
+                                        </div>
+                                        <p class="text-sm text-gray-500 mt-1"><i class="fas fa-map-marker-alt mr-1"></i> 3.1 miles away • 789 Elm St</p>
+                                        <p class="text-sm text-gray-600 mt-1">Haircuts, styling, and beauty services</p>
+                                        <div class="mt-2 flex items-center justify-between">
+                                            <div class="flex items-center text-sm text-gray-500">
+                                                <i class="fas fa-clock mr-1"></i> Open until 8:00 PM
+                                            </div>
+                                            <button class="text-sm font-medium text-indigo-600 hover:text-indigo-500">Book Appointment</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="space-y-4">
+                    <!-- Favorites -->
+                    <div class="bg-white shadow rounded-lg overflow-hidden">
+                        <div class="px-4 py-3 border-b border-gray-200 bg-gray-50">
+                            <h2 class="text-lg font-medium text-gray-900">Your Favorites</h2>
+                        </div>
+                        <div class="p-4">
+                            <div class="text-center text-gray-500 py-4">
+                                <i class="fas fa-heart text-2xl mb-2"></i>
+                                <p>No favorite shops yet</p>
+                                <button class="mt-2 text-sm font-medium text-indigo-600 hover:text-indigo-500">Browse shops</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Appointments -->
+                    <div class="bg-white shadow rounded-lg overflow-hidden">
+                        <div class="px-4 py-3 border-b border-gray-200 bg-gray-50">
+                            <h2 class="text-lg font-medium text-gray-900">Your Appointments</h2>
+                        </div>
+                        <div class="p-4">
+                            <div class="text-center text-gray-500 py-4">
+                                <i class="fas fa-calendar-alt text-2xl mb-2"></i>
+                                <p>No upcoming appointments</p>
+                                <button class="mt-2 text-sm font-medium text-indigo-600 hover:text-indigo-500">Book now</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vendor View (Hidden by default) -->
+        <div id="vendorView" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 hidden">
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold text-gray-900">Manage Your Shop</h1>
+                <p class="text-gray-600 mt-1">Update your shop details and availability</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Shop Details -->
+                <div class="lg:col-span-2 space-y-4">
+                    <div class="bg-white shadow rounded-lg overflow-hidden">
+                        <div class="px-4 py-3 border-b border-gray-200 bg-gray-50">
+                            <h2 class="text-lg font-medium text-gray-900">Shop Information</h2>
+                        </div>
+                        <div class="p-4">
+                            <form>
+                                <div class="grid grid-cols-1 gap-y-4 gap-x-6 sm:grid-cols-6">
+                                    <div class="sm:col-span-4">
+                                        <label for="shop-name" class="block text-sm font-medium text-gray-700">Shop Name</label>
+                                        <input type="text" name="shop-name" id="shop-name" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" value="Fresh Groceries">
+                                    </div>
+
+                                    <div class="sm:col-span-4">
+                                        <label for="shop-address" class="block text-sm font-medium text-gray-700">Address</label>
+                                        <input type="text" name="shop-address" id="shop-address" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" value="123 Main St, Anytown">
+                                    </div>
+
+                                    <div class="sm:col-span-6">
+                                        <label for="shop-description" class="block text-sm font-medium text-gray-700">Description</label>
+                                        <textarea id="shop-description" name="shop-description" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">Fresh produce, dairy, and pantry staples. Family-owned since 1995.</textarea>
+                                    </div>
+
+                                    <div class="sm:col-span-6">
+                                        <label class="block text-sm font-medium text-gray-700">Shop Image</label>
+                                        <div class="mt-1 flex items-center">
+                                            <span class="inline-block h-16 w-16 rounded-md overflow-hidden bg-gray-100">
+                                                <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" alt="Shop image" class="h-full w-full object-cover">
+                                            </span>
+                                            <button type="button" class="ml-5 bg-white py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                                Change
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-6 flex justify-end">
+                                    <button type="button" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                        Cancel
+                                    </button>
+                                    <button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                        Save
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Working Hours -->
+                    <div class="bg-white shadow rounded-lg overflow-hidden">
+                        <div class="px-4 py-3 border-b border-gray-200 bg-gray-50">
+                            <h2 class="text-lg font-medium text-gray-900">Working Hours</h2>
+                        </div>
+                        <div class="p-4">
+                            <div class="space-y-4">
+                                <!-- Monday -->
+                                <div class="flex items-center justify-between">
+                                    <div class="w-24">Monday</div>
+                                    <div class="flex-1 flex items-center space-x-2">
+                                        <select class="block w-32 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                            <option>9:00 AM</option>
+                                            <option>8:00 AM</option>
+                                            <option>10:00 AM</option>
+                                        </select>
+                                        <span>to</span>
+                                        <select class="block w-32 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                            <option>6:00 PM</option>
+                                            <option>5:00 PM</option>
+                                            <option>7:00 PM</option>
+                                            <option>8:00 PM</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input id="monday-closed" name="monday-closed" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                        <label for="monday-closed" class="ml-2 block text-sm text-gray-700">Closed</label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Tuesday -->
+                                <div class="flex items-center justify-between">
+                                    <div class="w-24">Tuesday</div>
+                                    <div class="flex-1 flex items-center space-x-2">
+                                        <select class="block w-32 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                            <option>9:00 AM</option>
+                                            <option>8:00 AM</option>
+                                            <option>10:00 AM</option>
+                                        </select>
+                                        <span>to</span>
+                                        <select class="block w-32 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                            <option>6:00 PM</option>
+                                            <option>5:00 PM</option>
+                                            <option>7:00 PM</option>
+                                            <option>8:00 PM</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input id="tuesday-closed" name="tuesday-closed" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                        <label for="tuesday-closed" class="ml-2 block text-sm text-gray-700">Closed</label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Wednesday -->
+                                <div class="flex items-center justify-between">
+                                    <div class="w-24">Wednesday</div>
+                                    <div class="flex-1 flex items-center space-x-2">
+                                        <select class="block w-32 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                            <option>9:00 AM</option>
+                                            <option>8:00 AM</option>
+                                            <option>10:00 AM</option>
+                                        </select>
+                                        <span>to</span>
+                                        <select class="block w-32 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                            <option>6:00 PM</option>
+                                            <option>5:00 PM</option>
+                                            <option>7:00 PM</option>
+                                            <option>8:00 PM</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input id="wednesday-closed" name="wednesday-closed" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                        <label for="wednesday-closed" class="ml-2 block text-sm text-gray-700">Closed</label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Thursday -->
+                                <div class="flex items-center justify-between">
+                                    <div class="w-24">Thursday</div>
+                                    <div class="flex-1 flex items-center space-x-2">
+                                        <select class="block w-32 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                            <option>9:00 AM</option>
+                                            <option>8:00 AM</option>
+                                            <option>10:00 AM</option>
+                                        </select>
+                                        <span>to</span>
+                                        <select class="block w-32 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                            <option>6:00 PM</option>
+                                            <option>5:00 PM</option>
+                                            <option>7:00 PM</option>
+                                            <option>8:00 PM</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input id="thursday-closed" name="thursday-closed" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                        <label for="thursday-closed" class="ml-2 block text-sm text-gray-700">Closed</label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Friday -->
+                                <div class="flex items-center justify-between">
+                                    <div class="w-24">Friday</div>
+                                    <div class="flex-1 flex items-center space-x-2">
+                                        <select class="block w-32 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                            <option>9:00 AM</option>
+                                            <option>8:00 AM</option>
+                                            <option>10:00 AM</option>
+                                        </select>
+                                        <span>to</span>
+                                        <select class="block w-32 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                            <option>6:00 PM</option>
+                                            <option>5:00 PM</option>
+                                            <option>7:00 PM</option>
+                                            <option>8:00 PM</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input id="friday-closed" name="friday-closed" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                        <label for="friday-closed" class="ml-2 block text-sm text-gray-700">Closed</label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Saturday -->
+                                <div class="flex items-center justify-between">
+                                    <div class="w-24">Saturday</div>
+                                    <div class="flex-1 flex items-center space-x-2">
+                                        <select class="block w-32 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                            <option>10:00 AM</option>
+                                            <option>9:00 AM</option>
+                                            <option>11:00 AM</option>
+                                        </select>
+                                        <span>to</span>
+                                        <select class="block w-32 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                            <option>4:00 PM</option>
+                                            <option>3:00 PM</option>
+                                            <option>5:00 PM</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input id="saturday-closed" name="saturday-closed" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                        <label for="saturday-closed" class="ml-2 block text-sm text-gray-700">Closed</label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Sunday -->
+                                <div class="flex items-center justify-between">
+                                    <div class="w-24">Sunday</div>
+                                    <div class="flex-1 flex items-center space-x-2">
+                                        <select disabled class="block w-32 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-gray-100">
+                                            <option>Closed</option>
+                                        </select>
+                                        <span class="text-gray-400">to</span>
+                                        <select disabled class="block w-32 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-gray-100">
+                                            <option>Closed</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input id="sunday-closed" name="sunday-closed" type="checkbox" checked class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                        <label for="sunday-closed" class="ml-2 block text-sm text-gray-700">Closed</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-6 flex justify-end">
+                                <button type="button" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    Cancel
+                                </button>
+                                <button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="space-y-4">
+                    <!-- Shop Status -->
+                    <div class="bg-white shadow rounded-lg overflow-hidden">
+                        <div class="px-4 py-3 border-b border-gray-200 bg-gray-50">
+                            <h2 class="text-lg font-medium text-gray-900">Shop Status</h2>
+                        </div>
+                        <div class="p-4">
+                            <div class="space-y-4">
+                                <div class="flex items-center">
+                                    <input id="status-open" name="status" type="radio" checked class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300">
+                                    <label for="status-open" class="ml-3 block text-sm font-medium text-gray-700">
+                                        <span class="inline-block w-3 h-3 rounded-full bg-green-500 mr-1"></span> Open
+                                    </label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input id="status-busy" name="status" type="radio" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300">
+                                    <label for="status-busy" class="ml-3 block text-sm font-medium text-gray-700">
+                                        <span class="inline-block w-3 h-3 rounded-full bg-yellow-500 mr-1"></span> Busy
+                                    </label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input id="status-mild" name="status" type="radio" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300">
+                                    <label for="status-mild" class="ml-3 block text-sm font-medium text-gray-700">
+                                        <span class="inline-block w-3 h-3 rounded-full bg-blue-500 mr-1"></span> Mild Traffic
+                                    </label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input id="status-closed" name="status" type="radio" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300">
+                                    <label for="status-closed" class="ml-3 block text-sm font-medium text-gray-700">
+                                        <span class="inline-block w-3 h-3 rounded-full bg-red-500 mr-1"></span> Closed
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="mt-6">
+                                <button type="button" class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    Update Status
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notifications -->
+                    <div class="bg-white shadow rounded-lg overflow-hidden">
+                        <div class="px-4 py-3 border-b border-gray-200 bg-gray-50">
+                            <h2 class="text-lg font-medium text-gray-900">Recent Bookings</h2>
+                        </div>
+                        <div class="p-4">
+                            <div class="text-center text-gray-500 py-4">
+                                <i class="fas fa-bell text-2xl mb-2"></i>
+                                <p>No new bookings</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Modal -->
+        <div id="loginModal" class="fixed inset-0 overflow-y-auto hidden z-50">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                    <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+                </div>
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900">Login to your account</h3>
+                                <div class="mt-5">
+                                    <form class="space-y-6">
+                                        <div>
+                                            <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
+                                            <div class="mt-1">
+                                                <input id="email" name="email" type="email" autocomplete="email" required class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                                            <div class="mt-1">
+                                                <input id="password" name="password" type="password" autocomplete="current-password" required class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center">
+                                                <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                                <label for="remember-me" class="ml-2 block text-sm text-gray-700">Remember me</label>
+                                            </div>
+                                            <div class="text-sm">
+                                                <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Forgot your password?</a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <button type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm">
+                            Login
+                        </button>
+                        <button id="cancelLoginBtn" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Register Modal -->
+        <div id="registerModal" class="fixed inset-0 overflow-y-auto hidden z-50">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                    <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+                </div>
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900">Create an account</h3>
+                                <div class="mt-5">
+                                    <form class="space-y-6">
+                                        <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                                            <div class="sm:col-span-3">
+                                                <label for="first-name" class="block text-sm font-medium text-gray-700">First name</label>
+                                                <div class="mt-1">
+                                                    <input type="text" name="first-name" id="first-name" autocomplete="given-name" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                                </div>
+                                            </div>
+                                            <div class="sm:col-span-3">
+                                                <label for="last-name" class="block text-sm font-medium text-gray-700">Last name</label>
+                                                <div class="mt-1">
+                                                    <input type="text" name="last-name" id="last-name" autocomplete="family-name" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                                </div>
+                                            </div>
+                                            <div class="sm:col-span-6">
+                                                <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
+                                                <div class="mt-1">
+                                                    <input id="email" name="email" type="email" autocomplete="email" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                                </div>
+                                            </div>
+                                            <div class="sm:col-span-6">
+                                                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                                                <div class="mt-1">
+                                                    <input id="password" name="password" type="password" autocomplete="new-password" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                                </div>
+                                            </div>
+                                            <div class="sm:col-span-6">
+                                                <label for="confirm-password" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                                                <div class="mt-1">
+                                                    <input id="confirm-password" name="confirm-password" type="password" autocomplete="new-password" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                                </div>
+                                            </div>
+                                            <div class="sm:col-span-6">
+                                                <label for="user-type" class="block text-sm font-medium text-gray-700">I am a</label>
+                                                <div class="mt-1">
+                                                    <select id="user-type" name="user-type" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                                        <option>Customer</option>
+                                                        <option>Shop Owner</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <button type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm">
+                            Register
+                        </button>
+                        <button id="cancelRegisterBtn" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Modal -->
+        <div id="bookingModal" class="fixed inset-0 overflow-y-auto hidden z-50">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                    <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+                </div>
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900">Book Appointment</h3>
+                                <div class="mt-5">
+                                    <form class="space-y-6">
+                                        <div>
+                                            <label for="booking-date" class="block text-sm font-medium text-gray-700">Date</label>
+                                            <div class="mt-1">
+                                                <input type="date" id="booking-date" name="booking-date" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label for="booking-time" class="block text-sm font-medium text-gray-700">Time</label>
+                                            <div class="mt-1">
+                                                <select id="booking-time" name="booking-time" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                                    <option>10:00 AM</option>
+                                                    <option>11:00 AM</option>
+                                                    <option>12:00 PM</option>
+                                                    <option>1:00 PM</option>
+                                                    <option>2:00 PM</option>
+                                                    <option>3:00 PM</option>
+                                                    <option>4:00 PM</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label for="booking-notes" class="block text-sm font-medium text-gray-700">Notes (Optional)</label>
+                                            <div class="mt-1">
+                                                <textarea id="booking-notes" name="booking-notes" rows="3" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Any special requests..."></textarea>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <button type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm">
+                            Confirm Booking
+                        </button>
+                        <button id="cancelBookingBtn" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white mt-12">
+        <div class="max-w-7xl mx-auto py-12 px-4 overflow-hidden sm:px-6 lg:px-8">
+            <nav class="-mx-5 -my-2 flex flex-wrap justify-center" aria-label="Footer">
+                <div class="px-5 py-2">
+                    <a href="#" class="text-base text-gray-500 hover:text-gray-900">About</a>
+                </div>
+                <div class="px-5 py-2">
+                    <a href="#" class="text-base text-gray-500 hover:text-gray-900">Blog</a>
+                </div>
+                <div class="px-5 py-2">
+                    <a href="#" class="text-base text-gray-500 hover:text-gray-900">Jobs</a>
+                </div>
+                <div class="px-5 py-2">
+                    <a href="#" class="text-base text-gray-500 hover:text-gray-900">Press</a>
+                </div>
+                <div class="px-5 py-2">
+                    <a href="#" class="text-base text-gray-500 hover:text-gray-900">Accessibility</a>
+                </div>
+                <div class="px-5 py-2">
+                    <a href="#" class="text-base text-gray-500 hover:text-gray-900">Partners</a>
+                </div>
+            </nav>
+            <div class="mt-8 flex justify-center space-x-6">
+                <a href="#" class="text-gray-400 hover:text-gray-500">
+                    <span class="sr-only">Facebook</span>
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-gray-500">
+                    <span class="sr-only">Instagram</span>
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-gray-500">
+                    <span class="sr-only">Twitter</span>
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-gray-500">
+                    <span class="sr-only">GitHub</span>
+                    <i class="fab fa-github"></i>
+                </a>
+            </div>
+            <p class="mt-8 text-center text-base text-gray-400">
+                &copy; 2023 ShopSync. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // View toggles
+        const customerBtn = document.getElementById('customerBtn');
+        const vendorBtn = document.getElementById('vendorBtn');
+        const mobileCustomerBtn = document.getElementById('mobileCustomerBtn');
+        const mobileVendorBtn = document.getElementById('mobileVendorBtn');
+        const customerView = document.getElementById('customerView');
+        const vendorView = document.getElementById('vendorView');
+        
+        function showCustomerView() {
+            customerView.classList.remove('hidden');
+            vendorView.classList.add('hidden');
+            customerBtn.classList.add('bg-indigo-600', 'text-white');
+            customerBtn.classList.remove('text-gray-700', 'hover:bg-gray-100');
+            vendorBtn.classList.remove('bg-indigo-600', 'text-white');
+            vendorBtn.classList.add('text-gray-700', 'hover:bg-gray-100');
+            mobileCustomerBtn.classList.add('bg-indigo-600', 'text-white');
+            mobileCustomerBtn.classList.remove('text-gray-700', 'hover:bg-gray-100');
+            mobileVendorBtn.classList.remove('bg-indigo-600', 'text-white');
+            mobileVendorBtn.classList.add('text-gray-700', 'hover:bg-gray-100');
+        }
+        
+        function showVendorView() {
+            customerView.classList.add('hidden');
+            vendorView.classList.remove('hidden');
+            customerBtn.classList.remove('bg-indigo-600', 'text-white');
+            customerBtn.classList.add('text-gray-700', 'hover:bg-gray-100');
+            vendorBtn.classList.add('bg-indigo-600', 'text-white');
+            vendorBtn.classList.remove('text-gray-700', 'hover:bg-gray-100');
+            mobileCustomerBtn.classList.remove('bg-indigo-600', 'text-white');
+            mobileCustomerBtn.classList.add('text-gray-700', 'hover:bg-gray-100');
+            mobileVendorBtn.classList.add('bg-indigo-600', 'text-white');
+            mobileVendorBtn.classList.remove('text-gray-700', 'hover:bg-gray-100');
+        }
+        
+        customerBtn.addEventListener('click', showCustomerView);
+        vendorBtn.addEventListener('click', showVendorView);
+        mobileCustomerBtn.addEventListener('click', () => {
+            showCustomerView();
+            mobileMenu.classList.add('hidden');
+        });
+        mobileVendorBtn.addEventListener('click', () => {
+            showVendorView();
+            mobileMenu.classList.add('hidden');
+        });
+
+        // Modal toggles
+        const loginBtn = document.getElementById('loginBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const mobileLoginBtn = document.getElementById('mobileLoginBtn');
+        const mobileRegisterBtn = document.getElementById('mobileRegisterBtn');
+        const loginModal = document.getElementById('loginModal');
+        const registerModal = document.getElementById('registerModal');
+        const bookingModal = document.getElementById('bookingModal');
+        const cancelLoginBtn = document.getElementById('cancelLoginBtn');
+        const cancelRegisterBtn = document.getElementById('cancelRegisterBtn');
+        const cancelBookingBtn = document.getElementById('cancelBookingBtn');
+        
+        // Book appointment buttons
+        const bookAppointmentBtns = document.querySelectorAll('[class*="text-indigo-600"]:not([id*="Btn"])');
+        
+        loginBtn.addEventListener('click', () => {
+            loginModal.classList.remove('hidden');
+        });
+        
+        registerBtn.addEventListener('click', () => {
+            registerModal.classList.remove('hidden');
+        });
+        
+        mobileLoginBtn.addEventListener('click', () => {
+            loginModal.classList.remove('hidden');
+            mobileMenu.classList.add('hidden');
+        });
+        
+        mobileRegisterBtn.addEventListener('click', () => {
+            registerModal.classList.remove('hidden');
+            mobileMenu.classList.add('hidden');
+        });
+        
+        cancelLoginBtn.addEventListener('click', () => {
+            loginModal.classList.add('hidden');
+        });
+        
+        cancelRegisterBtn.addEventListener('click', () => {
+            registerModal.classList.add('hidden');
+        });
+        
+        cancelBookingBtn.addEventListener('click', () => {
+            bookingModal.classList.add('hidden');
+        });
+        
+        bookAppointmentBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                bookingModal.classList.remove('hidden');
+            });
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener('click', (event) => {
+            if (event.target === loginModal) {
+                loginModal.classList.add('hidden');
+            }
+            if (event.target === registerModal) {
+                registerModal.classList.add('hidden');
+            }
+            if (event.target === bookingModal) {
+                bookingModal.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

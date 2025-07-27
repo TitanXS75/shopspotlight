@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  />
+  <title>ShopSync - Customer Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-gray-50 font-sans">
+
+  <!-- Navigation -->
+  <nav class="bg-white shadow-sm sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
+      <div class="flex items-center space-x-3">
+        <i class="fas fa-store text-indigo-600 text-2xl"></i>
+        <span class="text-xl font-bold text-gray-900">ShopSpotlight.</span>
+      </div>
+      <button id="logoutBtn" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+        Logout
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <h1 class="text-2xl font-bold text-gray-900 mb-6">Find Shops Near You</h1>
+    <div class="flex flex-col sm:flex-row gap-4 items-center mb-8">
+      <div class="relative flex-grow w-full sm:w-auto">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <i class="fas fa-search text-gray-400"></i>
+        </div>
+        <input
+          type="text"
+          id="shopSearch"
+          class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          placeholder="Search for shops..."
+        />
+      </div>
+      <button
+        class="px-4 py-2 border border-gray-300 rounded-md bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center"
+        id="filterBtn"
+      >
+        <i class="fas fa-filter mr-2"></i> Filters
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Map Section -->
+      <div class="lg:col-span-2 space-y-4">
+        <div class="map-container rounded-lg shadow">
+          <div class="map-placeholder">
+            <i class="fas fa-map-marker-alt text-4xl mr-3"></i>
+            <span>Map view of nearby shops</span>
+          </div>
+        </div>
+
+        <!-- Shop List -->
+        <div class="bg-white shadow rounded-lg overflow-hidden">
+          <div class="px-4 py-3 border-b border-gray-200 bg-gray-50">
+            <h2 class="text-lg font-medium text-gray-900">Nearby Shops</h2>
+          </div>
+          <div id="shopList" class="divide-y divide-gray-200 max-h-[550px] overflow-auto">
+            <!-- Shop items will be dynamically added here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="space-y-4">
+        <!-- Favorites -->
+        <div class="bg-white shadow rounded-lg overflow-hidden">
+          <div class="px-4 py-3 border-b border-gray-200 bg-gray-50">
+            <h2 class="text-lg font-medium text-gray-900">Your Favorites</h2>
+          </div>
+          <div id="favoritesSection" class="p-4 text-center text-gray-500 py-4">
+            <i class="fas fa-heart text-2xl mb-2"></i>
+            <p>No favorite shops yet</p>
+            <button id="browseShopsBtn" class="mt-2 text-sm font-medium text-indigo-600 hover:text-indigo-500">
+              Browse shops
+            </button>
+          </div>
+        </div>
+
+        <!-- Appointments -->
+        <div class="bg-white shadow rounded-lg overflow-hidden">
+          <div class="px-4 py-3 border-b border-gray-200 bg-gray-50">
+            <h2 class="text-lg font-medium text-gray-900">Your Appointments</h2>
+          </div>
+          <div id="appointmentsSection" class="p-4 text-center text-gray-500 py-4">
+            <i class="fas fa-calendar-alt text-2xl mb-2"></i>
+            <p>No upcoming appointments</p>
+            <button id="bookNowBtn" class="mt-2 text-sm font-medium text-indigo-600 hover:text-indigo-500">
+              Book now
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

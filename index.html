@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ShopSpotLight. - Login</title>
+  <title>ShopSync - Login</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link
     rel="stylesheet"
@@ -12,20 +13,11 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="bg-gray-50 font-sans flex items-center justify-center min-h-screen">
-  <div
-    class="bg-white p-8 rounded-lg shadow-md w-full max-w-md"
-    role="main"
-  >
-    <h2 class="text-2xl font-bold mb-6 text-gray-900 text-center">
-      Login to ShopSpotLight.
-    </h2>
+  <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md" role="main">
+    <h2 class="text-2xl font-bold mb-6 text-gray-900 text-center">Login to ShopSync</h2>
     <form id="loginForm" class="space-y-6" autocomplete="off">
       <div>
-        <label
-          for="email"
-          class="block text-sm font-medium text-gray-700"
-          >Email address</label
-        >
+        <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
         <input
           id="email"
           name="email"
@@ -36,11 +28,7 @@
         />
       </div>
       <div>
-        <label
-          for="password"
-          class="block text-sm font-medium text-gray-700"
-          >Password</label
-        >
+        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
         <input
           id="password"
           name="password"
@@ -58,16 +46,10 @@
             type="checkbox"
             class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
           />
-          <label for="rememberMe" class="ml-2 block text-sm text-gray-900">
-            Remember me
-          </label>
+          <label for="rememberMe" class="ml-2 block text-sm text-gray-900">Remember me</label>
         </div>
         <div class="text-sm">
-          <a
-            href="signup.html"
-            class="font-medium text-indigo-600 hover:text-indigo-500"
-            >Create an account</a
-          >
+          <a href="signup.html" class="font-medium text-indigo-600 hover:text-indigo-500">Create an account</a>
         </div>
       </div>
       <button
@@ -79,43 +61,36 @@
     </form>
   </div>
 
-  <script>
-    // Simple client-side user info (mock)
-    const users = [
-      { email: 'shopowner@example.com', password: 'ownerpass', role: 'shopowner' },
-      { email: 'customer@example.com', password: 'customerpass', role: 'customer' },
-    ];
+<script>
+  // Open login: Accept any email and password
+  const form = document.getElementById('loginForm');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = form.email.value.trim().toLowerCase();
 
-    // Login form handler
-    const form = document.getElementById('loginForm');
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const email = form.email.value.trim();
-      const password = form.password.value;
+    // Simple rule: if email contains 'owner' => role=shopowner; else customer
+    const role = email.includes('owner') ? 'shopowner' : 'customer';
 
-      const user = users.find(u => u.email === email && u.password === password);
-      if (user) {
-        // Save user role in localStorage/sessionStorage to simulate logged in status
-        sessionStorage.setItem('userRole', user.role);
-        if (user.role === 'shopowner') {
-          window.location.href = 'vendor.html';
-        } else {
-          window.location.href = 'customer.html';
-        }
-      } else {
-        alert('Invalid email or password. Please try again.');
-      }
-    });
+    // Save user role in sessionStorage to simulate being logged in
+    sessionStorage.setItem('userRole', role);
 
-    // On page load: redirect if already logged in
-    window.addEventListener('DOMContentLoaded', () => {
-      const role = sessionStorage.getItem('userRole');
-      if (role === 'shopowner') {
-        window.location.href = 'vendor.html';
-      } else if (role === 'customer') {
-        window.location.href = 'customer.html';
-      }
-    });
-  </script>
+    // Redirect user to relevant dashboard
+    if (role === 'shopowner') {
+      window.location.href = 'vendor.html';
+    } else {
+      window.location.href = 'customer.html';
+    }
+  });
+
+  // On page load: redirect if already logged in
+  window.addEventListener('DOMContentLoaded', () => {
+    const role = sessionStorage.getItem('userRole');
+    if (role === 'shopowner') {
+      window.location.href = 'vendor.html';
+    } else if (role === 'customer') {
+      window.location.href = 'customer.html';
+    }
+  });
+</script>
 </body>
 </html>

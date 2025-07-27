@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ShopSpotlight - Role Selection & Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+  <style>
+    /* Basic styling for role selection and login */
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f3;
+      margin: 0; padding: 0;
+      display: flex; justify-content: center; align-items: center; min-height: 100vh;
+    }
+    .container {
+      background: white;
+      border-radius: 12px;
+      padding: 32px 24px;
+      box-shadow: 0 2px 18px rgba(0,0,0,0.15);
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+    }
+    .hidden { display: none; }
+    .title {
+      font-size: 2.2rem;
+      margin-bottom: 4px;
+      font-weight: bold;
+    }
+    .subtitle {
+      font-weight: lighter;
+      font-size: 1rem;
+      margin-bottom: 28px;
+      color: #333;
+    }
+    .role-option {
+      border: 1.5px solid #ccc;
+      border-radius: 8px;
+      padding: 18px 12px;
+      margin: 12px 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: left;
+      transition: all 0.3s ease;
+      user-select: none;
+    }
+    .role-option.selected {
+      border-color: #10b981;
+      background-color: #d1fae5;
+    }
+    .role-option span {
+      font-size: 2.4rem;
+      margin-right: 16px;
+      user-select: none;
+    }
+    button {
+      margin-top: 24px;
+      padding: 14px 24px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      border: none;
+      background-color:#ccc;
+      color:#666;
+      border-radius: 8px;
+      width: 100%;
+      cursor: not-allowed;
+      transition: background-color 0.3s;
+    }
+    button.enabled {
+      background-color: #10b981;
+      color: white;
+      cursor: pointer;
+    }
+    form label {
+      display: block;
+      text-align: left;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #444;
+    }
+    form input {
+      padding: 10px 12px;
+      border: 1.8px solid #ddd;
+      border-radius: 6px;
+      width: 100%;
+      margin-bottom: 18px;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+    form input:focus {
+      outline: none;
+      border-color: #10b981;
+      box-shadow: 0 0 8px #10b981aa;
+    }
+    .login-text-link {
+      margin-top: 14px;
+      font-size: 0.9rem;
+      color: #10b981;
+      cursor: pointer;
+      display: inline-block;
+      user-select: none;
+    }
+    .login-text-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Role Selection UI -->
+    <div id="roleSelection">
+      <div class="title">ShopSpotlight</div>
+      <div class="subtitle">Connect local shops with customers</div>
+
+      <div class="role-option" id="ownerOption">
+        <span>🏪</span>
+        <div>
+          <strong>Shop Owner</strong><br />
+          <small>Manage your shop and appointments</small>
+        </div>
+      </div>
+
+      <div class="role-option" id="customerOption">
+        <span>🙋‍♀️</span>
+        <div>
+          <strong>Customer</strong><br />
+          <small>Discover and book local services</small>
+        </div>
+      </div>
+
+      <button id="continueBtn" disabled>Continue</button>
+    </div>
+
+    <!-- Login UI -->
+    <div id="loginSection" class="hidden">
+      <div class="title" id="loginTitle">Login</div>
+
+      <form id="loginForm" autocomplete="off">
+        <label for="email">Email address</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="you@example.com"
+          required
+        />
+
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Enter your password"
+          required
+        />
+
+        <button type="submit" id="loginBtn">Login</button>
+      </form>
+
+      <div style="margin-top:14px;">
+        <span class="login-text-link" id="backToRoleSelect">&larr; Back to Role Selection</span>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    (function() {
+      const roleSelectionDiv = document.getElementById('roleSelection');
+      const loginSectionDiv = document.getElementById('loginSection');
+      const ownerOption = document.getElementById('ownerOption');
+      const customerOption = document.getElementById('customerOption');
+      const continueBtn = document.getElementById('continueBtn');
+      const loginTitle = document.getElementById('loginTitle');
+      const backToRoleSelectBtn = document.getElementById('backToRoleSelect');
+      const loginForm = document.getElementById('loginForm');
+
+      let selectedRole = null;
+
+      // Load saved role and logged-in status on page load
+      window.addEventListener('DOMContentLoaded', () => {
+        const loggedInRole = sessionStorage.getItem('userRole');
+        if (loggedInRole) {
+          // Already logged in - redirect to dashboard immediately
+          redirectToDashboard(loggedInRole);
+          return;
+        }
+
+        // Check if user has already selected role but not logged in yet
+        const savedRoleSelection = sessionStorage.getItem('userRoleSelection');
+        if (savedRoleSelection) {
+          selectedRole = savedRoleSelection;
+          showLoginSection();
+        } else {
+          showRoleSelection();
+        }
+      });
+
+      function updateRoleUI() {
+        ownerOption.classList.toggle('selected', selectedRole === 'owner');
+        customerOption.classList.toggle('selected', selectedRole === 'customer');
+        continueBtn.disabled = !selectedRole;
+        continueBtn.classList.toggle('enabled', !!selectedRole);
+      }
+
+      ownerOption.addEventListener('click', () => {
+        selectedRole = 'owner';
+        updateRoleUI();
+      });
+
+      customerOption.addEventListener('click', () => {
+        selectedRole = 'customer';
+        updateRoleUI();
+      });
+
+      continueBtn.addEventListener('click', () => {
+        if (!selectedRole) return;
+        // Save role selection
+        sessionStorage.setItem('userRoleSelection', selectedRole);
+        showLoginSection();
+      });
+
+      backToRoleSelectBtn.addEventListener('click', () => {
+        // Clear selected role to allow re-selection
+        selectedRole = null;
+        sessionStorage.removeItem('userRoleSelection');
+        showRoleSelection();
+      });
+
+      loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        // Get form input values (for demo, no actual validation)
+        const email = loginForm.email.value.trim();
+        const password = loginForm.password.value;
+
+        if (!email || !password) {
+          alert('Please enter email and password.');
+          return;
+        }
+
+        // Accept any email and pw for now, assign role from stored selection
+        const role = sessionStorage.getItem('userRoleSelection') || selectedRole;
+        if (!role) {
+          alert('Role not selected. Please select a role first.');
+          showRoleSelection();
+          return;
+        }
+
+        // Save logged-in user role
+        sessionStorage.setItem('userRole', role);
+
+        // Clear role selection now since logged in
+        sessionStorage.removeItem('userRoleSelection');
+
+        // Redirect to dashboard
+        redirectToDashboard(role);
+      });
+
+      function showLoginSection() {
+        roleSelectionDiv.classList.add('hidden');
+        loginSectionDiv.classList.remove('hidden');
+        loginTitle.textContent = selectedRole === 'owner' ? 'Shop Owner Login' : 'Customer Login';
+      }
+
+      function showRoleSelection() {
+        roleSelectionDiv.classList.remove('hidden');
+        loginSectionDiv.classList.add('hidden');
+        updateRoleUI();
+      }
+
+      function redirectToDashboard(role) {
+        if (role === 'owner') {
+          window.location.href = 'vendor.html';
+        } else {
+          window.location.href = 'customer.html';
+        }
+      }
+    })();
+  </script>
+
+</body>
+</html>

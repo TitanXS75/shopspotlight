@@ -1,291 +1,345 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ShopSpotlight - Role Selection & Login</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-  />
-  <style>
-    /* Basic styling for role selection and login */
-    body {
-      font-family: Arial, sans-serif;
-      background: #f0f4f3;
-      margin: 0; padding: 0;
-      display: flex; justify-content: center; align-items: center; min-height: 100vh;
-    }
-    .container {
-      background: white;
-      border-radius: 12px;
-      padding: 32px 24px;
-      box-shadow: 0 2px 18px rgba(0,0,0,0.15);
-      max-width: 400px;
-      width: 90%;
-      text-align: center;
-    }
-    .hidden { display: none; }
-    .title {
-      font-size: 2.2rem;
-      margin-bottom: 4px;
-      font-weight: bold;
-    }
-    .subtitle {
-      font-weight: lighter;
-      font-size: 1rem;
-      margin-bottom: 28px;
-      color: #333;
-    }
-    .role-option {
-      border: 1.5px solid #ccc;
-      border-radius: 8px;
-      padding: 18px 12px;
-      margin: 12px 0;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: left;
-      transition: all 0.3s ease;
-      user-select: none;
-    }
-    .role-option.selected {
-      border-color: #10b981;
-      background-color: #d1fae5;
-    }
-    .role-option span {
-      font-size: 2.4rem;
-      margin-right: 16px;
-      user-select: none;
-    }
-    button {
-      margin-top: 24px;
-      padding: 14px 24px;
-      font-weight: bold;
-      font-size: 1.1rem;
-      border: none;
-      background-color:#ccc;
-      color:#666;
-      border-radius: 8px;
-      width: 100%;
-      cursor: not-allowed;
-      transition: background-color 0.3s;
-    }
-    button.enabled {
-      background-color: #10b981;
-      color: white;
-      cursor: pointer;
-    }
-    form label {
-      display: block;
-      text-align: left;
-      margin-bottom: 6px;
-      font-weight: 600;
-      color: #444;
-    }
-    form input {
-      padding: 10px 12px;
-      border: 1.8px solid #ddd;
-      border-radius: 6px;
-      width: 100%;
-      margin-bottom: 18px;
-      font-size: 1rem;
-      transition: border-color 0.2s;
-    }
-    form input:focus {
-      outline: none;
-      border-color: #10b981;
-      box-shadow: 0 0 8px #10b981aa;
-    }
-    .login-text-link {
-      margin-top: 14px;
-      font-size: 0.9rem;
-      color: #10b981;
-      cursor: pointer;
-      display: inline-block;
-      user-select: none;
-    }
-    .login-text-link:hover {
-      text-decoration: underline;
-    }
-  </style>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>ShopSpotlight – Role Selection & Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <style>
+      /* Animated gradient background */
+      body {
+        min-height: 100vh;
+        background: linear-gradient(120deg,#f0fdfa,#e0f2fe 45%,#90cdf4 100%);
+        animation: floatbg 8s ease-in-out infinite alternate;
+        background-attachment: fixed;
+      }
 
-  <div class="container">
+      @keyframes floatbg {
+        0% { background-position: 0% 100%; }
+        100% { background-position: 100% 0%; }
+      }
 
-    <!-- Role Selection UI -->
-    <div id="roleSelection">
-      <div class="title">ShopSpotlight</div>
-      <div class="subtitle">Connect local shops with customers</div>
+      .glass {
+        background: rgba(255,255,255,0.75);
+        box-shadow:
+          0 4px 32px 4px rgba(16,185,129,0.08), /* emerald */
+          0 1.5px 10px 0px rgba(76,85,221,0.03);
+        border-radius: 1.25rem;
+        border: 1.5px solid #e0e7ef;
+        backdrop-filter: blur(8px) saturate(1.2);
+        transition: box-shadow 0.3s, transform 0.3s;
+        animation: floatcard 3.5s ease-in-out infinite alternate;
+      }
+      @keyframes floatcard {
+        0% { transform: translateY(0px);}
+        100% { transform: translateY(-8px);}
+      }
+      .glass:focus-within {
+        box-shadow: 0 8px 36px -12px #16a34a44, 0 2px 10px #a7f3d044;
+        outline: 2px solid #10b98111;
+      }
+      .role-select-card.selected {
+        border: 2px solid #10b981;
+        background: linear-gradient(120deg,#d1fae5cc 80%,#fffafd44);
+        box-shadow: 0 2px 18px #10b98122, 0 0px 0 0 #fff0;
+        animation: pulseGlow 1.6s infinite alternate;
+      }
+      @keyframes pulseGlow {
+        0% { box-shadow: 0 4px 20px #10b98120; }
+        100% { box-shadow: 0 10px 32px #10b98133; }
+      }
+      /* Label floating highlight */
+      .input-group label {
+        font-size: 0.98rem !important;
+        font-weight: 600;
+        color: #0e2626;
+      }
+    </style>
+  </head>
+  <body class="flex items-center justify-center px-2 min-h-screen">
+    <div class="max-w-md w-full glass p-7 px-6 shadow-xl relative">
 
-      <div class="role-option" id="ownerOption">
-        <span>🏪</span>
-        <div>
-          <strong>Shop Owner</strong><br />
-          <small>Manage your shop and appointments</small>
+      <!-- App Logo and heading -->
+      <div class="flex flex-col items-center mb-7">
+        <span class="rounded-xl shadow bg-emerald-100 p-3 mb-2 text-3xl flex items-center">
+          <i class="fas fa-store text-emerald-500"></i>
+        </span>
+        <span class="text-2xl font-bold text-gray-800 tracking-tight">ShopSpotlight</span>
+        <span class="text-sm text-gray-500">Connect local shops with customers</span>
+      </div>
+
+      <!-- Role Selection UI -->
+      <div id="roleSelection">
+        <div class="text-center mb-2">
+          <h2 class="font-semibold text-lg text-gray-800 mb-2">Select Your Role</h2>
+          <p class="text-gray-500 text-sm">
+            Who are you? This determines your experience.</p>
+        </div>
+        <div class="flex flex-col gap-4 mt-3">
+          <div class="role-select-card flex items-center gap-4 px-4 py-5 bg-white/80 border border-gray-300 rounded-xl cursor-pointer transition-all shadow role-card hover:shadow-md"
+               id="ownerOption">
+            <span class="text-3xl bg-emerald-100 rounded-full p-2">
+              <i class="fas fa-briefcase text-emerald-500"></i>
+            </span>
+            <div>
+              <div class="font-bold text-gray-900">Shop Owner</div>
+              <div class="text-sm text-gray-500">Manage your shop & appointments</div>
+            </div>
+          </div>
+          <div class="role-select-card flex items-center gap-4 px-4 py-5 bg-white/80 border border-gray-300 rounded-xl cursor-pointer transition-all shadow role-card hover:shadow-md"
+               id="customerOption">
+            <span class="text-3xl bg-sky-100 rounded-full p-2">
+              <i class="fas fa-user-friends text-sky-500"></i>
+            </span>
+            <div>
+              <div class="font-bold text-gray-900">Customer</div>
+              <div class="text-sm text-gray-500">Discover & book local services</div>
+            </div>
+          </div>
+        </div>
+        <button id="continueBtn"
+          class="w-full mt-6 py-3 font-bold text-lg rounded-lg bg-gradient-to-r from-gray-400 to-gray-300 text-gray-600 shadow disabled:opacity-80 cursor-not-allowed transition-all"
+          disabled>
+          Continue
+        </button>
+      </div>
+
+      <!-- Login UI -->
+      <div id="loginSection" class="hidden">
+        <div class="text-center mb-3">
+          <h2 class="font-semibold text-lg text-gray-800 mb-2" id="loginTitle">Login</h2>
+          <p class="text-gray-500 text-xs mb-3" id="loginHint">Enter your details to continue</p>
+        </div>
+        <form id="loginForm" autocomplete="off" class="mt-1">
+          <div class="input-group mb-3">
+            <label for="email">Email address</label>
+            <input
+              class="mt-1 py-2 px-3 border border-gray-300 focus:border-emerald-500 rounded-lg w-full transition-all outline-none shadow"
+              type="email" id="email" name="email"
+              placeholder="you@example.com" required />
+          </div>
+          <div class="input-group mb-2">
+            <label for="password">Password</label>
+            <input
+              class="mt-1 py-2 px-3 border border-gray-300 focus:border-emerald-500 rounded-lg w-full transition-all outline-none shadow"
+              type="password" id="password" name="password"
+              placeholder="Enter your password" required />
+          </div>
+          <button type="submit" id="loginBtn"
+            class="w-full py-3 font-bold text-lg rounded-lg bg-gradient-to-r from-emerald-500 to-sky-400 text-white shadow hover:from-emerald-600 hover:to-sky-500 focus:outline-none transition-all mt-3 enabled:cursor-pointer disabled:opacity-40"
+          >
+            Login
+          </button>
+        </form>
+        <div class="flex justify-between items-center mt-6 pt-2 border-t border-gray-200">
+          <span class="text-emerald-600 hover:underline cursor-pointer text-sm" id="backToRoleSelect">
+            <i class="fas fa-arrow-left mr-1"></i> Change Role
+          </span>
+          <span class="text-sky-500 hover:underline cursor-pointer text-sm" id="signupLink">
+            <i class="fas fa-user-plus mr-1"></i> Sign Up
+          </span>
         </div>
       </div>
 
-      <div class="role-option" id="customerOption">
-        <span>🙋‍♀️</span>
-        <div>
-          <strong>Customer</strong><br />
-          <small>Discover and book local services</small>
+      <!-- Signup UI (hidden by default, optional) -->
+      <div id="signupSection" class="hidden">
+        <div class="text-center mb-3">
+          <h2 class="font-semibold text-lg text-gray-800 mb-2" id="signupTitle">Sign Up</h2>
+          <p class="text-gray-500 text-xs mb-3" id="signupHint">Create a new account</p>
+        </div>
+        <form id="signupForm" autocomplete="off" class="mt-1">
+          <div class="input-group mb-3">
+            <label for="emailSignup">Email address</label>
+            <input
+              class="mt-1 py-2 px-3 border border-gray-300 focus:border-sky-500 rounded-lg w-full transition-all outline-none shadow"
+              type="email" id="emailSignup" name="emailSignup"
+              placeholder="you@example.com" required />
+          </div>
+          <div class="input-group mb-3">
+            <label for="passwordSignup">Password</label>
+            <input
+              class="mt-1 py-2 px-3 border border-gray-300 focus:border-sky-500 rounded-lg w-full transition-all outline-none shadow"
+              type="password" id="passwordSignup" name="passwordSignup"
+              placeholder="Choose a password" required />
+          </div>
+          <button type="submit" id="signupBtn"
+            class="w-full py-3 font-bold text-lg rounded-lg bg-gradient-to-r from-sky-500 to-emerald-400 text-white shadow hover:from-sky-600 hover:to-emerald-500 focus:outline-none transition-all mt-3 enabled:cursor-pointer disabled:opacity-40"
+          >
+            Create Account
+          </button>
+        </form>
+        <div class="flex justify-between items-center mt-6 pt-2 border-t border-gray-200">
+          <span class="text-emerald-600 hover:underline cursor-pointer text-sm" id="backToRoleSelect2">
+            <i class="fas fa-arrow-left mr-1"></i> Change Role
+          </span>
+          <span class="text-emerald-500 hover:underline cursor-pointer text-sm" id="backToLogin">
+            <i class="fas fa-sign-in-alt mr-1"></i> Login
+          </span>
         </div>
       </div>
 
-      <button id="continueBtn" disabled>Continue</button>
     </div>
 
-    <!-- Login UI -->
-    <div id="loginSection" class="hidden">
-      <div class="title" id="loginTitle">Login</div>
+    <script>
+      (function() {
+        // DOM nodes
+        const roleSelectionDiv = document.getElementById('roleSelection');
+        const loginSectionDiv = document.getElementById('loginSection');
+        const signupSectionDiv = document.getElementById('signupSection');
+        const ownerOption = document.getElementById('ownerOption');
+        const customerOption = document.getElementById('customerOption');
+        const continueBtn = document.getElementById('continueBtn');
+        const loginTitle = document.getElementById('loginTitle');
+        const loginHint = document.getElementById('loginHint');
+        const backToRoleSelectBtn = document.getElementById('backToRoleSelect');
+        const loginForm = document.getElementById('loginForm');
+        const signupLink = document.getElementById('signupLink');
+        const signupForm = document.getElementById('signupForm');
+        const backToRoleSelectBtn2 = document.getElementById('backToRoleSelect2');
+        const backToLoginBtn = document.getElementById('backToLogin');
+        const signupTitle = document.getElementById('signupTitle');
+        const signupHint = document.getElementById('signupHint');
 
-      <form id="loginForm" autocomplete="off">
-        <label for="email">Email address</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          placeholder="you@example.com"
-          required
-        />
+        let selectedRole = null;
 
-        <label for="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          placeholder="Enter your password"
-          required
-        />
+        // Start with role selection shown, unless already logged in
+        window.addEventListener('DOMContentLoaded', () => {
+          const loggedInRole = sessionStorage.getItem('userRole');
+          if (loggedInRole) {
+            redirectToDashboard(loggedInRole);
+            return;
+          }
+          // Restore role selection if previously selected
+          const savedRoleSelection = sessionStorage.getItem('userRoleSelection');
+          if (savedRoleSelection) {
+            selectedRole = savedRoleSelection;
+            showLoginSection();
+          } else {
+            showRoleSelection();
+          }
+        });
 
-        <button type="submit" id="loginBtn">Login</button>
-      </form>
-
-      <div style="margin-top:14px;">
-        <span class="login-text-link" id="backToRoleSelect">&larr; Back to Role Selection</span>
-      </div>
-    </div>
-
-  </div>
-
-  <script>
-    (function() {
-      const roleSelectionDiv = document.getElementById('roleSelection');
-      const loginSectionDiv = document.getElementById('loginSection');
-      const ownerOption = document.getElementById('ownerOption');
-      const customerOption = document.getElementById('customerOption');
-      const continueBtn = document.getElementById('continueBtn');
-      const loginTitle = document.getElementById('loginTitle');
-      const backToRoleSelectBtn = document.getElementById('backToRoleSelect');
-      const loginForm = document.getElementById('loginForm');
-
-      let selectedRole = null;
-
-      // Load saved role and logged-in status on page load
-      window.addEventListener('DOMContentLoaded', () => {
-        const loggedInRole = sessionStorage.getItem('userRole');
-        if (loggedInRole) {
-          // Already logged in - redirect to dashboard immediately
-          redirectToDashboard(loggedInRole);
-          return;
+        function updateRoleUI() {
+          ownerOption.classList.toggle('selected', selectedRole === 'owner');
+          customerOption.classList.toggle('selected', selectedRole === 'customer');
+          continueBtn.disabled = !selectedRole;
+          if (selectedRole) {
+            continueBtn.classList.add('bg-emerald-500', 'text-white','hover:bg-emerald-600','cursor-pointer');
+            continueBtn.classList.remove('bg-gradient-to-r','from-gray-400','to-gray-300','text-gray-600','cursor-not-allowed');
+          } else {
+            continueBtn.classList.remove('bg-emerald-500','text-white','hover:bg-emerald-600','cursor-pointer');
+            continueBtn.classList.add('bg-gradient-to-r','from-gray-400','to-gray-300','text-gray-600','cursor-not-allowed');
+          }
         }
 
-        // Check if user has already selected role but not logged in yet
-        const savedRoleSelection = sessionStorage.getItem('userRoleSelection');
-        if (savedRoleSelection) {
-          selectedRole = savedRoleSelection;
+        ownerOption.addEventListener('click', () => {
+          selectedRole = 'owner';
+          updateRoleUI();
+        });
+        customerOption.addEventListener('click', () => {
+          selectedRole = 'customer';
+          updateRoleUI();
+        });
+
+        continueBtn.addEventListener('click', () => {
+          if (!selectedRole) return;
+          sessionStorage.setItem('userRoleSelection', selectedRole);
           showLoginSection();
-        } else {
+        });
+
+        backToRoleSelectBtn.addEventListener('click', () => {
+          selectedRole = null;
+          sessionStorage.removeItem('userRoleSelection');
           showRoleSelection();
+        });
+        if (backToRoleSelectBtn2) {
+          backToRoleSelectBtn2.addEventListener('click', () => {
+            showRoleSelection();
+          });
         }
-      });
-
-      function updateRoleUI() {
-        ownerOption.classList.toggle('selected', selectedRole === 'owner');
-        customerOption.classList.toggle('selected', selectedRole === 'customer');
-        continueBtn.disabled = !selectedRole;
-        continueBtn.classList.toggle('enabled', !!selectedRole);
-      }
-
-      ownerOption.addEventListener('click', () => {
-        selectedRole = 'owner';
-        updateRoleUI();
-      });
-
-      customerOption.addEventListener('click', () => {
-        selectedRole = 'customer';
-        updateRoleUI();
-      });
-
-      continueBtn.addEventListener('click', () => {
-        if (!selectedRole) return;
-        // Save role selection
-        sessionStorage.setItem('userRoleSelection', selectedRole);
-        showLoginSection();
-      });
-
-      backToRoleSelectBtn.addEventListener('click', () => {
-        // Clear selected role to allow re-selection
-        selectedRole = null;
-        sessionStorage.removeItem('userRoleSelection');
-        showRoleSelection();
-      });
-
-      loginForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-
-        // Get form input values (for demo, no actual validation)
-        const email = loginForm.email.value.trim();
-        const password = loginForm.password.value;
-
-        if (!email || !password) {
-          alert('Please enter email and password.');
-          return;
+        if (backToLoginBtn) {
+          backToLoginBtn.addEventListener('click', () => {
+            showLoginSection();
+          });
         }
 
-        // Accept any email and pw for now, assign role from stored selection
-        const role = sessionStorage.getItem('userRoleSelection') || selectedRole;
-        if (!role) {
-          alert('Role not selected. Please select a role first.');
-          showRoleSelection();
-          return;
+        loginForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const email = loginForm.email.value.trim();
+          const password = loginForm.password.value;
+          if (!email || !password) {
+            alert('Please enter email and password.');
+            return;
+          }
+          const role = sessionStorage.getItem('userRoleSelection') || selectedRole;
+          if (!role) {
+            alert('Role not selected. Please select a role first.');
+            showRoleSelection();
+            return;
+          }
+          sessionStorage.setItem('userRole', role);
+          sessionStorage.removeItem('userRoleSelection');
+          redirectToDashboard(role);
+        });
+
+        // Show signup screen
+        if (signupLink && signupSectionDiv && signupForm) {
+          signupLink.addEventListener('click', () => {
+            showSignupSection();
+          });
+
+          signupForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Validate and simulate a signup!
+            const email = signupForm.emailSignup.value.trim();
+            const password = signupForm.passwordSignup.value;
+            if (!email || !password) {
+              alert('Please enter email and password.');
+              return;
+            }
+            alert("Account created! Now login.");
+            showLoginSection();
+          });
         }
 
-        // Save logged-in user role
-        sessionStorage.setItem('userRole', role);
-
-        // Clear role selection now since logged in
-        sessionStorage.removeItem('userRoleSelection');
-
-        // Redirect to dashboard
-        redirectToDashboard(role);
-      });
-
-      function showLoginSection() {
-        roleSelectionDiv.classList.add('hidden');
-        loginSectionDiv.classList.remove('hidden');
-        loginTitle.textContent = selectedRole === 'owner' ? 'Shop Owner Login' : 'Customer Login';
-      }
-
-      function showRoleSelection() {
-        roleSelectionDiv.classList.remove('hidden');
-        loginSectionDiv.classList.add('hidden');
-        updateRoleUI();
-      }
-
-      function redirectToDashboard(role) {
-        if (role === 'owner') {
-          window.location.href = 'vendor.html';
-        } else {
-          window.location.href = 'customer.html';
+        function showLoginSection() {
+          roleSelectionDiv.classList.add('hidden');
+          loginSectionDiv.classList.remove('hidden');
+          signupSectionDiv.classList.add('hidden');
+          loginTitle.textContent = selectedRole === 'owner' ? 'Shop Owner Login' : 'Customer Login';
+          loginHint.textContent = selectedRole === 'owner'
+            ? "Login to manage your shop dashboard."
+            : "Login to explore and book services.";
         }
-      }
-    })();
-  </script>
 
-</body>
+        function showSignupSection() {
+          roleSelectionDiv.classList.add('hidden');
+          loginSectionDiv.classList.add('hidden');
+          signupSectionDiv.classList.remove('hidden');
+          signupTitle.textContent = selectedRole === 'owner' ? 'Shop Owner Signup' : 'Customer Signup';
+          signupHint.textContent = selectedRole === 'owner'
+            ? "Create a new shop owner account."
+            : "Become a customer and explore shops.";
+        }
+
+        function showRoleSelection() {
+          roleSelectionDiv.classList.remove('hidden');
+          loginSectionDiv.classList.add('hidden');
+          signupSectionDiv.classList.add('hidden');
+          updateRoleUI();
+        }
+
+        function redirectToDashboard(role) {
+          if (role === 'owner') {
+            window.location.href = 'vendor.html';
+          } else {
+            window.location.href = 'customer.html';
+          }
+        }
+      })();
+    </script>
+  </body>
 </html>

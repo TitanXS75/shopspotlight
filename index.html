@@ -13,24 +13,25 @@
     crossorigin="anonymous"
   />
   <style>
-    /* Neutral white background with subtle box shadow */
     body {
-      background-color: #ffffff;
-      font-family: 'Inter', sans-serif;
+      background-color: white;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 1rem;
+      margin: 0;
     }
 
     #app-container {
-      background: #ffffff;
+      background-color: white;
       border-radius: 1rem;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-      width: 100%;
+      box-shadow: 0 10px 30px rgb(0 0 0 / 0.1);
       max-width: 420px;
-      padding: 2rem 2rem 2.5rem;
+      width: 100%;
+      padding: 2rem 2rem 3rem;
       overflow: hidden;
     }
 
@@ -38,95 +39,152 @@
       display: none;
     }
 
-    /* Role cards */
+    /* Role Cards */
     .role-card {
       cursor: pointer;
-      border: 1.5px solid #dddddd;
+      border: 1.5px solid #d1d5db; /* Tailwind gray-300 */
       border-radius: 1rem;
-      background: #f9fafb;
+      background-color: white;
       padding: 1.5rem;
       display: flex;
       align-items: center;
       gap: 1.25rem;
       user-select: none;
-      transition: border-color 0.3s ease, background-color 0.3s ease;
+      transition: border-color 0.25s ease, background-color 0.25s ease;
     }
 
     .role-card:hover {
-      border-color: #10b981;
-      background-color: #ecfdf5;
+      border-color: #059669; /* Tailwind green-600 */
+      background-color: #ecfdf5; /* Tailwind green-50 */
     }
 
     .role-card.selected {
-      border-color: #10b981;
+      border-color: #059669;
       background-color: #ecfdf5;
-      box-shadow: 0 0 10px #10b981aa;
+      box-shadow: 0 0 10px #10b98180;
     }
 
-    /* Button */
+    /* Buttons */
     button:disabled {
-      opacity: 0.4;
+      opacity: 0.5;
       cursor: not-allowed;
     }
 
-    /* Form inputs */
-    input, select, textarea {
-      background-color: #f9fafb;
-      border: 1.5px solid #ddd;
-      border-radius: 0.75rem;
-      padding: 0.6rem 0.75rem;
+    /* Form Inputs */
+    input,
+    select,
+    textarea {
+      background-color: white;
+      border: 1.5px solid #d1d5db;
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.75rem;
       width: 100%;
       font-size: 1rem;
+      color: #111827; /* Gray-900 */
       transition: border-color 0.2s ease;
-      color: #111827;
     }
-    input:focus, select:focus, textarea:focus {
-      border-color: #10b981;
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #059669;
       outline: none;
-      box-shadow: 0 0 6px #10b98166;
+      box-shadow: 0 0 6px #10b98180;
     }
 
     label {
       font-weight: 600;
-      margin-bottom: 0.25rem;
+      margin-bottom: 0.3rem;
       display: block;
-      color: #1f2937;
+      color: #374151; /* Gray-700 */
+      font-size: 0.95rem;
     }
 
-    /* Links */
-    .text-link {
-      cursor: pointer;
-      color: #3b82f6;
-      text-decoration: underline;
+    .input-row {
+      display: flex;
+      gap: 1rem;
     }
-    .text-link:hover, .text-link:focus {
-      color: #2563eb;
+
+    .input-row > div {
+      flex: 1;
+    }
+
+    /* Professional buttons/links below forms */
+    .footer-button {
+      display: inline-block;
+      padding: 0.375rem 0.8rem;
+      border: 1.5px solid #d1d5db;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      color: #374151;
+      background-color: white;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+      user-select: none;
+      line-height: 1.25rem;
+      white-space: nowrap;
+      min-width: auto;
+      font-size: 0.875rem;
+    }
+    .footer-button:hover,
+    .footer-button:focus {
+      background-color: #ecfdf5; /* Tailwind green-50 */
+      border-color: #059669; /* Tailwind green-600 */
+      color: #047857; /* Tailwind green-700 */
+      outline: none;
+    }
+    .footer-button:focus {
+      box-shadow: 0 0 0 3px #bbf7d0; /* Tailwind green-200 */
+      outline-offset: 2px;
+    }
+
+    /* Layout for footer buttons container */
+    .footer-buttons-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      flex-wrap: wrap;
     }
   </style>
 </head>
 <body>
-  <main id="app-container" role="main" aria-live="polite">
-
+  <main id="app-container" role="main">
     <!-- Role Selection -->
-    <section id="role-selection-section" aria-label="Role selection">
+    <section id="role-selection" aria-label="Role selection">
       <div class="mb-6 text-center">
         <h1 class="text-3xl font-bold text-gray-900">ShopSpotlight</h1>
         <p class="text-gray-600 mt-1">Connect local shops with customers</p>
       </div>
 
       <div id="roles" class="flex flex-col gap-4 mb-6" role="list">
-        <div role="listitem" tabindex="0" id="owner-role" class="role-card" aria-pressed="false" aria-label="Select Shop Owner role">
+        <div
+          role="listitem"
+          tabindex="0"
+          id="owner"
+          class="role-card"
+          aria-pressed="false"
+          aria-label="Select Shop Owner role"
+        >
           <div class="text-3xl bg-green-100 rounded-full p-2">
-            <i class="fas fa-briefcase text-green-600" aria-hidden="true"></i>
+            <i class="fas fa-briefcase text-green-700" aria-hidden="true"></i>
           </div>
           <div>
             <div class="font-semibold text-gray-900">Shop Owner</div>
             <div class="text-gray-500 text-sm">Manage your shop and appointments</div>
           </div>
         </div>
-        <div role="listitem" tabindex="0" id="customer-role" class="role-card" aria-pressed="false" aria-label="Select Customer role">
+
+        <div
+          role="listitem"
+          tabindex="0"
+          id="customer"
+          class="role-card"
+          aria-pressed="false"
+          aria-label="Select Customer role"
+        >
           <div class="text-3xl bg-sky-100 rounded-full p-2">
-            <i class="fas fa-users text-sky-600" aria-hidden="true"></i>
+            <i class="fas fa-users text-sky-700" aria-hidden="true"></i>
           </div>
           <div>
             <div class="font-semibold text-gray-900">Customer</div>
@@ -135,7 +193,11 @@
         </div>
       </div>
 
-      <button id="continue-btn" disabled class="w-full py-3 rounded-lg text-white bg-gray-400 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+      <button
+        id="continue-btn"
+        disabled
+        class="w-full py-3 rounded-lg bg-gray-400 text-white font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600"
+      >
         Continue
       </button>
     </section>
@@ -144,28 +206,54 @@
     <section id="login-section" class="section-hidden" aria-label="Login form">
       <div class="mb-4 text-center">
         <h2 id="login-title" class="text-2xl font-bold text-gray-900">Login</h2>
-        <p id="login-desc" class="text-gray-600 mt-1">Enter your credentials to login.</p>
+        <p id="login-desc" class="text-gray-600">Enter your credentials to login.</p>
       </div>
 
       <form id="login-form" autocomplete="off" novalidate>
         <div class="mb-4">
           <label for="login-email">Email address</label>
-          <input type="email" id="login-email" name="login-email" required aria-required="true" autocomplete="email" placeholder="you@example.com" />
+          <input
+            id="login-email"
+            name="login-email"
+            type="email"
+            required
+            placeholder="you@example.com"
+          />
         </div>
         <div class="mb-6">
           <label for="login-password">Password</label>
-          <input type="password" id="login-password" name="login-password" required aria-required="true" autocomplete="current-password" placeholder="Enter your password" />
+          <input
+            id="login-password"
+            name="login-password"
+            type="password"
+            required
+            placeholder="Enter your password"
+          />
         </div>
-        <button type="submit" class="w-full py-3 rounded-lg bg-green-600 hover:bg-green-700 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors mb-4">
+        <button
+          type="submit"
+          class="w-full py-3 rounded-lg bg-green-600 text-white font-semibold transition-colors hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600"
+        >
           Login
         </button>
       </form>
 
-      <div class="flex justify-between">
-        <button id="back-to-role" class="text-gray-700 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500" aria-label="Back to role selection">
+      <div class="footer-buttons-container mt-4">
+        <button
+          id="back-to-role"
+          class="footer-button"
+          aria-label="Back to role selection"
+          type="button"
+        >
           &larr; Change role
         </button>
-        <button id="show-signup" class="text-blue-600 underline hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600" aria-label="Go to signup form">
+
+        <button
+          id="show-signup"
+          class="footer-button"
+          aria-label="Go to signup form"
+          type="button"
+        >
           Don't have an account? Sign up
         </button>
       </div>
@@ -175,62 +263,110 @@
     <section id="signup-section" class="section-hidden" aria-label="Signup form">
       <div class="mb-4 text-center">
         <h2 id="signup-title" class="text-2xl font-bold text-gray-900">Sign Up</h2>
-        <p id="signup-desc" class="text-gray-600 mt-1">Create your account.</p>
+        <p id="signup-desc" class="text-gray-600">Create your account.</p>
       </div>
 
       <form id="signup-form" autocomplete="off" novalidate>
-        <div class="mb-4">
-          <label for="signup-name">Full Name</label>
-          <input type="text" id="signup-name" name="signup-name" required aria-required="true" placeholder="Your full name" />
+        <div class="input-row mb-4" role="group" aria-label="Full name inputs">
+          <div>
+            <label for="first-name">First Name</label>
+            <input
+              id="first-name"
+              name="first-name"
+              type="text"
+              required
+              placeholder="First name"
+            />
+          </div>
+          <div>
+            <label for="surname">Surname</label>
+            <input
+              id="surname"
+              name="surname"
+              type="text"
+              required
+              placeholder="Surname"
+            />
+          </div>
         </div>
         <div class="mb-4">
           <label for="signup-email">Email address</label>
-          <input type="email" id="signup-email" name="signup-email" required aria-required="true" autocomplete="email" placeholder="you@example.com" />
+          <input
+            id="signup-email"
+            name="signup-email"
+            type="email"
+            required
+            placeholder="you@example.com"
+          />
         </div>
         <div class="mb-4">
           <label for="signup-password">Password</label>
-          <input type="password" id="signup-password" name="signup-password" required aria-required="true" placeholder="Create a password" autocomplete="new-password" />
+          <input
+            id="signup-password"
+            name="signup-password"
+            type="password"
+            required
+            placeholder="Create a password"
+          />
         </div>
         <div class="mb-6">
-          <label for="signup-password-confirm">Confirm Password</label>
-          <input type="password" id="signup-password-confirm" name="signup-password-confirm" required aria-required="true" placeholder="Confirm password" autocomplete="new-password" />
+          <label for="signup-confirm-password">Confirm Password</label>
+          <input
+            id="signup-confirm-password"
+            name="signup-confirm-password"
+            type="password"
+            required
+            placeholder="Confirm your password"
+          />
         </div>
-        <button type="submit" class="w-full py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-colors mb-4">
-          Sign Up
+        <button
+          type="submit"
+          class="w-full py-3 rounded-lg bg-blue-600 text-white font-semibold transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600"
+        >
+          Create Account
         </button>
       </form>
 
-      <div class="flex justify-between">
-        <button id="back-to-login" class="text-gray-700 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500" aria-label="Back to login form">
+      <div class="footer-buttons-container mt-4">
+        <button
+          id="back-to-login"
+          class="footer-button"
+          aria-label="Back to login form"
+          type="button"
+        >
           &larr; Back to login
         </button>
-        <button id="back-to-role-2" class="text-gray-700 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500" aria-label="Back to role selection">
+
+        <button
+          id="back-to-role-2"
+          class="footer-button"
+          aria-label="Back to role selection"
+          type="button"
+        >
           Change role
         </button>
       </div>
     </section>
-
   </main>
 
-  <!-- Scripts -->
   <script>
     (() => {
-      const roleSelectionSection = document.getElementById('role-selection-section');
+      const roleSelectionSection = document.getElementById('role-selection');
       const loginSection = document.getElementById('login-section');
       const signupSection = document.getElementById('signup-section');
 
-      const ownerRole = document.getElementById('owner-role');
-      const customerRole = document.getElementById('customer-role');
+      const ownerRole = document.getElementById('owner');
+      const customerRole = document.getElementById('customer');
       const roles = [ownerRole, customerRole];
 
       const continueBtn = document.getElementById('continue-btn');
 
       let selectedRole = null;
 
-      // Role selection event handler
-      roles.forEach(role => {
+      // Role selection handlers
+      roles.forEach((role) => {
         role.addEventListener('click', () => selectRole(role));
-        role.addEventListener('keydown', e => {
+        role.addEventListener('keydown', (e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             selectRole(role);
@@ -239,24 +375,21 @@
       });
 
       function selectRole(roleEl) {
-        roles.forEach(role => {
+        roles.forEach((role) => {
           role.classList.remove('selected');
           role.setAttribute('aria-pressed', 'false');
         });
         roleEl.classList.add('selected');
         roleEl.setAttribute('aria-pressed', 'true');
-        selectedRole = roleEl.id === 'owner-role' ? 'owner' : 'customer';
+        selectedRole = roleEl.id;
         continueBtn.disabled = false;
         continueBtn.classList.remove('bg-gray-400');
         continueBtn.classList.add('bg-green-600', 'hover:bg-green-700', 'cursor-pointer');
       }
 
-      // Continue button click
       continueBtn.addEventListener('click', () => {
         if (!selectedRole) return;
-        // save role selection to session for demo
-        sessionStorage.setItem('userRoleSelection', selectedRole);
-
+        sessionStorage.setItem('userRole', selectedRole);
         showLogin();
       });
 
@@ -269,23 +402,24 @@
         const loginTitle = document.getElementById('login-title');
         const loginDesc = document.getElementById('login-desc');
         loginTitle.textContent = selectedRole === 'owner' ? 'Shop Owner Login' : 'Customer Login';
-        loginDesc.textContent = selectedRole === 'owner' ?
-          'Enter your credentials to manage your shop dashboard.' :
-          'Enter your credentials to explore and book local services.';
+        loginDesc.textContent =
+          selectedRole === 'owner'
+            ? 'Enter your credentials to manage your shop.'
+            : 'Enter your credentials to book services.';
       }
 
       // Show signup form
-      const showSignupBtn = document.getElementById('show-signup');
-      showSignupBtn.addEventListener('click', () => {
+      document.getElementById('show-signup').addEventListener('click', () => {
         loginSection.classList.add('section-hidden');
         signupSection.classList.remove('section-hidden');
 
         const signupTitle = document.getElementById('signup-title');
         const signupDesc = document.getElementById('signup-desc');
-        signupTitle.textContent = selectedRole === 'owner' ? 'Shop Owner Signup' : 'Customer Signup';
-        signupDesc.textContent = selectedRole === 'owner' ?
-          'Create your Shop Owner account.' :
-          'Create your Customer account.';
+        signupTitle.textContent = selectedRole === 'owner' ? 'Shop Owner Sign Up' : 'Customer Sign Up';
+        signupDesc.textContent =
+          selectedRole === 'owner'
+            ? 'Create an account to manage your shop.'
+            : 'Create an account to book services.';
       });
 
       // Back buttons
@@ -297,91 +431,56 @@
       });
 
       function backToRole() {
+        roleSelectionSection.classList.remove('section-hidden');
         loginSection.classList.add('section-hidden');
         signupSection.classList.add('section-hidden');
-        roleSelectionSection.classList.remove('section-hidden');
+
         selectedRole = null;
         continueBtn.disabled = true;
         continueBtn.classList.remove('bg-green-600', 'hover:bg-green-700', 'cursor-pointer');
         continueBtn.classList.add('bg-gray-400');
-        roles.forEach(role => {
+        roles.forEach((role) => {
           role.classList.remove('selected');
           role.setAttribute('aria-pressed', 'false');
         });
-        sessionStorage.removeItem('userRoleSelection');
+
+        sessionStorage.removeItem('userRole');
       }
 
-      // Login form submission handler
-      const loginForm = document.getElementById('login-form');
-      loginForm.addEventListener('submit', e => {
+      // Login form submit
+      document.getElementById('login-form').addEventListener('submit', (e) => {
         e.preventDefault();
-        const email = loginForm['login-email'].value.trim();
-        const password = loginForm['login-password'].value;
+        const email = e.target['login-email'].value.trim();
+        const password = e.target['login-password'].value;
         if (!email || !password) {
-          alert('Please fill in both email and password.');
+          alert('Please enter email and password.');
           return;
         }
-        // Demo login logic (accept any)
-        const role = sessionStorage.getItem('userRoleSelection') || selectedRole;
-        if (!role) {
-          alert('Please select a role first.');
-          backToRole();
-          return;
-        }
-        sessionStorage.setItem('userRole', role);
-        alert(`Logged in as ${role === 'owner' ? 'Shop Owner' : 'Customer'}`);
-        // Redirect or load dashboard here:
-        // For demo, just reload role selection
-        backToRole();
+        alert(`Logged in as ${selectedRole || 'user'}.`);
       });
 
-      // Signup form submission handler
-      const signupForm = document.getElementById('signup-form');
-      signupForm.addEventListener('submit', e => {
+      // Signup form submit
+      document.getElementById('signup-form').addEventListener('submit', (e) => {
         e.preventDefault();
-
-        const name = signupForm['signup-name'].value.trim();
-        const email = signupForm['signup-email'].value.trim();
-        const password = signupForm['signup-password'].value;
-        const passwordConfirm = signupForm['signup-password-confirm'].value;
-
-        if (!name || !email || !password || !passwordConfirm) {
-          alert('Please fill all fields.');
+        const firstName = e.target['first-name'].value.trim();
+        const surname = e.target['surname'].value.trim();
+        const email = e.target['signup-email'].value.trim();
+        const password = e.target['signup-password'].value;
+        const confirmPassword = e.target['signup-confirm-password'].value;
+        if (!firstName || !surname || !email || !password || !confirmPassword) {
+          alert('Please fill in all fields.');
           return;
         }
-        if (password !== passwordConfirm) {
+        if (password !== confirmPassword) {
           alert('Passwords do not match.');
           return;
         }
-
-        // Demo signup - just alert success and go to login
-        alert(`Account created for ${name}. Please log in.`);
-        signupForm.reset();
-
-        showLogin();
+        alert(`Account created for ${firstName} ${surname}. Please log in.`);
+        e.target.reset();
+        signupSection.classList.add('section-hidden');
+        loginSection.classList.remove('section-hidden');
       });
-
     })();
-
-    // Mobile menu toggle
-    const menuToggle = document.getElementById('menu-toggle');
-    const mobileMenu = document.getElementById('mobile-menu');
-
-    menuToggle.addEventListener('click', () => {
-      mobileMenu.classList.toggle('hidden');
-    });
-
-    // Close mobile menu on nav click and smooth scroll
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', e => {
-        e.preventDefault();
-        const target = document.querySelector(anchor.getAttribute('href'));
-        if (target) target.scrollIntoView({ behavior: 'smooth' });
-        if (!mobileMenu.classList.contains('hidden')) {
-          mobileMenu.classList.add('hidden');
-        }
-      });
-    });
   </script>
 </body>
 </html>

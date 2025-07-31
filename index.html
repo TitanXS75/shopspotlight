@@ -39,10 +39,9 @@
       display: none;
     }
 
-    /* Role Cards */
     .role-card {
       cursor: pointer;
-      border: 1.5px solid #d1d5db; /* Tailwind gray-300 */
+      border: 1.5px solid #d1d5db;
       border-radius: 1rem;
       background-color: white;
       padding: 1.5rem;
@@ -52,64 +51,49 @@
       user-select: none;
       transition: border-color 0.25s ease, background-color 0.25s ease;
     }
-
     .role-card:hover {
-      border-color: #059669; /* Tailwind green-600 */
-      background-color: #ecfdf5; /* Tailwind green-50 */
+      border-color: #059669;
+      background-color: #ecfdf5;
     }
-
     .role-card.selected {
       border-color: #059669;
       background-color: #ecfdf5;
       box-shadow: 0 0 10px #10b98180;
     }
 
-    /* Buttons */
     button:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
-
-    /* Form Inputs */
-    input,
-    select,
-    textarea {
+    input,select,textarea {
       background-color: white;
       border: 1.5px solid #d1d5db;
       border-radius: 0.5rem;
       padding: 0.5rem 0.75rem;
       width: 100%;
       font-size: 1rem;
-      color: #111827; /* Gray-900 */
+      color: #111827;
       transition: border-color 0.2s ease;
     }
-
-    input:focus,
-    select:focus,
-    textarea:focus {
+    input:focus,select:focus,textarea:focus {
       border-color: #059669;
       outline: none;
       box-shadow: 0 0 6px #10b98180;
     }
-
     label {
       font-weight: 600;
       margin-bottom: 0.3rem;
       display: block;
-      color: #374151; /* Gray-700 */
+      color: #374151;
       font-size: 0.95rem;
     }
-
     .input-row {
       display: flex;
       gap: 1rem;
     }
-
     .input-row > div {
       flex: 1;
     }
-
-    /* Professional buttons/links below forms */
     .footer-button {
       display: inline-block;
       padding: 0.375rem 0.8rem;
@@ -127,19 +111,16 @@
       min-width: auto;
       font-size: 0.875rem;
     }
-    .footer-button:hover,
-    .footer-button:focus {
-      background-color: #ecfdf5; /* Tailwind green-50 */
-      border-color: #059669; /* Tailwind green-600 */
-      color: #047857; /* Tailwind green-700 */
+    .footer-button:hover,.footer-button:focus {
+      background-color: #ecfdf5;
+      border-color: #059669;
+      color: #047857;
       outline: none;
     }
     .footer-button:focus {
-      box-shadow: 0 0 0 3px #bbf7d0; /* Tailwind green-200 */
+      box-shadow: 0 0 0 3px #bbf7d0;
       outline-offset: 2px;
     }
-
-    /* Layout for footer buttons container */
     .footer-buttons-container {
       display: flex;
       justify-content: space-between;
@@ -156,7 +137,6 @@
         <h1 class="text-3xl font-bold text-gray-900">ShopSpotlight</h1>
         <p class="text-gray-600 mt-1">Connect local shops with customers</p>
       </div>
-
       <div id="roles" class="flex flex-col gap-4 mb-6" role="list">
         <div
           role="listitem"
@@ -174,7 +154,6 @@
             <div class="text-gray-500 text-sm">Manage your shop and appointments</div>
           </div>
         </div>
-
         <div
           role="listitem"
           tabindex="0"
@@ -192,7 +171,6 @@
           </div>
         </div>
       </div>
-
       <button
         id="continue-btn"
         disabled
@@ -208,7 +186,6 @@
         <h2 id="login-title" class="text-2xl font-bold text-gray-900">Login</h2>
         <p id="login-desc" class="text-gray-600">Enter your credentials to login.</p>
       </div>
-
       <form id="login-form" autocomplete="off" novalidate>
         <div class="mb-4">
           <label for="login-email">Email address</label>
@@ -237,7 +214,6 @@
           Login
         </button>
       </form>
-
       <div class="footer-buttons-container mt-4">
         <button
           id="back-to-role"
@@ -247,7 +223,6 @@
         >
           &larr; Change role
         </button>
-
         <button
           id="show-signup"
           class="footer-button"
@@ -265,7 +240,6 @@
         <h2 id="signup-title" class="text-2xl font-bold text-gray-900">Sign Up</h2>
         <p id="signup-desc" class="text-gray-600">Create your account.</p>
       </div>
-
       <form id="signup-form" autocomplete="off" novalidate>
         <div class="input-row mb-4" role="group" aria-label="Full name inputs">
           <div>
@@ -326,7 +300,6 @@
           Create Account
         </button>
       </form>
-
       <div class="footer-buttons-container mt-4">
         <button
           id="back-to-login"
@@ -336,7 +309,6 @@
         >
           &larr; Back to login
         </button>
-
         <button
           id="back-to-role-2"
           class="footer-button"
@@ -348,22 +320,17 @@
       </div>
     </section>
   </main>
-
   <script>
     (() => {
       const roleSelectionSection = document.getElementById('role-selection');
       const loginSection = document.getElementById('login-section');
       const signupSection = document.getElementById('signup-section');
-
       const ownerRole = document.getElementById('owner');
       const customerRole = document.getElementById('customer');
       const roles = [ownerRole, customerRole];
-
       const continueBtn = document.getElementById('continue-btn');
-
       let selectedRole = null;
 
-      // Role selection handlers
       roles.forEach((role) => {
         role.addEventListener('click', () => selectRole(role));
         role.addEventListener('keydown', (e) => {
@@ -381,7 +348,8 @@
         });
         roleEl.classList.add('selected');
         roleEl.setAttribute('aria-pressed', 'true');
-        selectedRole = roleEl.id;
+        // <<<<< THE IMPORTANT PART:
+        selectedRole = roleEl.id === "owner" ? "shopowner" : "customer";
         continueBtn.disabled = false;
         continueBtn.classList.remove('bg-gray-400');
         continueBtn.classList.add('bg-green-600', 'hover:bg-green-700', 'cursor-pointer');
@@ -393,36 +361,31 @@
         showLogin();
       });
 
-      // Show login form
       function showLogin() {
         roleSelectionSection.classList.add('section-hidden');
         signupSection.classList.add('section-hidden');
         loginSection.classList.remove('section-hidden');
-
         const loginTitle = document.getElementById('login-title');
         const loginDesc = document.getElementById('login-desc');
-        loginTitle.textContent = selectedRole === 'owner' ? 'Shop Owner Login' : 'Customer Login';
+        loginTitle.textContent = selectedRole === 'shopowner' ? 'Shop Owner Login' : 'Customer Login';
         loginDesc.textContent =
-          selectedRole === 'owner'
+          selectedRole === 'shopowner'
             ? 'Enter your credentials to manage your shop.'
             : 'Enter your credentials to book services.';
       }
 
-      // Show signup form
       document.getElementById('show-signup').addEventListener('click', () => {
         loginSection.classList.add('section-hidden');
         signupSection.classList.remove('section-hidden');
-
         const signupTitle = document.getElementById('signup-title');
         const signupDesc = document.getElementById('signup-desc');
-        signupTitle.textContent = selectedRole === 'owner' ? 'Shop Owner Sign Up' : 'Customer Sign Up';
+        signupTitle.textContent = selectedRole === 'shopowner' ? 'Shop Owner Sign Up' : 'Customer Sign Up';
         signupDesc.textContent =
-          selectedRole === 'owner'
+          selectedRole === 'shopowner'
             ? 'Create an account to manage your shop.'
             : 'Create an account to book services.';
       });
 
-      // Back buttons
       document.getElementById('back-to-role').addEventListener('click', () => backToRole());
       document.getElementById('back-to-role-2').addEventListener('click', () => backToRole());
       document.getElementById('back-to-login').addEventListener('click', () => {
@@ -434,7 +397,6 @@
         roleSelectionSection.classList.remove('section-hidden');
         loginSection.classList.add('section-hidden');
         signupSection.classList.add('section-hidden');
-
         selectedRole = null;
         continueBtn.disabled = true;
         continueBtn.classList.remove('bg-green-600', 'hover:bg-green-700', 'cursor-pointer');
@@ -443,11 +405,9 @@
           role.classList.remove('selected');
           role.setAttribute('aria-pressed', 'false');
         });
-
         sessionStorage.removeItem('userRole');
       }
 
-      // Login form submit
       document.getElementById('login-form').addEventListener('submit', (e) => {
         e.preventDefault();
         const email = e.target['login-email'].value.trim();
@@ -456,10 +416,15 @@
           alert('Please enter email and password.');
           return;
         }
-        alert(`Logged in as ${selectedRole || 'user'}.`);
+        sessionStorage.setItem('userRole', selectedRole);
+        // Redirect to page after login
+        if (selectedRole === "shopowner") {
+          window.location.href = "vendor.html";
+        } else if (selectedRole === "customer") {
+          window.location.href = "customer.html";
+        }
       });
 
-      // Signup form submit
       document.getElementById('signup-form').addEventListener('submit', (e) => {
         e.preventDefault();
         const firstName = e.target['first-name'].value.trim();
